@@ -94,7 +94,8 @@ tp1_t *tp1_leer_archivo(const char *nombre)
 		}
 		if (agregar_pokemon_a_pokedex(pokedex, nuevo_pokemon) == -1) {
 			fclose(archivo);
-			return tp1_destruir(pokedex);
+			tp1_destruir(pokedex);
+			return NULL;
 		}
 	}
 	ordenar_pokemons_por_nombre(pokedex->pokemones,
@@ -217,7 +218,7 @@ size_t tp1_cantidad(tp1_t *tp1)
 	return tp1->cantidad_pokemons;
 }
 
-tp1_t *tp1_destruir(tp1_t *tp1)
+void *tp1_destruir(tp1_t *tp1)
 {
 	if (tp1 == NULL) {
 		return NULL;
@@ -349,14 +350,16 @@ tp1_t *tp1_combinar(tp1_t *tp1_a, tp1_t *tp1_b)
 	for (size_t i = 0; i < tp1_a->cantidad_pokemons; i++) {
 		if (agregar_copia_pokemon(resultado, &tp1_a->pokemones[i]) ==
 		    -1) {
-			return tp1_destruir(resultado);
+			tp1_destruir(resultado);
+			return NULL;
 		}
 	}
 
 	for (size_t i = 0; i < tp1_b->cantidad_pokemons; i++) {
 		if (agregar_copia_pokemon(resultado, &tp1_b->pokemones[i]) ==
 		    -1) {
-			return tp1_destruir(resultado);
+			tp1_destruir(resultado);
+			return NULL;
 		}
 	}
 
