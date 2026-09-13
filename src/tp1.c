@@ -3,6 +3,7 @@
 #include <strings.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <float.h>
 
 #define MAX_CAMPOS 4
 #define CAP_INICIAL 1
@@ -140,6 +141,38 @@ struct pokemon *parsear_pokemon(char *linea)
 		return NULL;
 	}
 	return pokemon;
+}
+
+bool parsear_velocidad(char *campo, int *resultado)
+{
+	if (campo == NULL || resultado == NULL) {
+		return NULL;
+	}
+
+	char *fin;
+	long valor = strtol(campo, &fin, 10);
+	if (fin == campo || *fin != '\0' || valor < 1 || valor > 99) {
+		return false;
+	}
+	*resultado = (int)valor;
+	return true;
+}
+
+bool parsear_peso(char *campo, int *resultado)
+{
+	if (campo == NULL || resultado == NULL) {
+		return false;
+	}
+
+	char *fin;
+	long valor = strtol(campo, &fin, 10);
+
+	if (fin == campo || *fin != '\0' || valor < 1 || valor > 99) {
+		return false;
+	}
+
+	*resultado = (int)valor;
+	return true;
 }
 
 int parsear_rareza(char letra, enum rareza_pokemon *rareza)
