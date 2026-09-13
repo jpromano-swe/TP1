@@ -100,4 +100,4 @@ La complejidad computacional es una forma de estudiar como crecen el tiempo de e
  
  - Explique qué dificultades tuvo para implementar las funcionalidades pedidas en el main (si tuvo alguna) y explique si alguna de estas dificultades se podría haber evitado modificando la definición del .h
 
- La principal dificultad que tuve fue en como acceder a los pokemons sin conocer la estructura interna de tp1_t, al ser de caja opaca. Lo pude resolver usando tp1_iterar, tp1_buscar_pokemon y tp1_buscar_orden. Tal vez se podria haber simplificado un poco si el .h tenia definida una funcion para convertir las rarezas a letra directamente.
+ La principal dificultad que tuve fue en como acceder a los pokemons sin conocer la estructura interna de `tp1_t`, al ser de caja opaca. Lo pude resolver usando `tp1_iterar`, `tp1_buscar_pokemon` y `tp1_buscar_orden`. Tal vez se podria haber simplificado un poco si el .h tenia definida una funcion para convertir las rarezas a letra directamente.
