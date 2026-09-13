@@ -2,11 +2,11 @@
 <img width="32px" src="img/algo2.svg">
 </div>
 
-# TP1: Archivos, strings y muchos punteros
+# TP1: Archivos, strings y punteros
 
 Se pide implementar la funcionalidad del archivo **.h** provisto según la descripción presente en el mismo y lo charlado en clase.
 
-Adicionalmente se pide la implementación de ***main.c*** que dado un archivo de pokemon y otros parámetros, cargue los datos y ejecute la operación pedida.
+Adicionalmente se pide la implementación de ***main.c*** que dado un archivo de pokedex y otros parámetros, cargue los datos y ejecute la operación pedida.
 
 Por último, es **obligatorio** implementar ***pruebas_alumno.c*** con pruebas de la funcionalidad de ***tp1.h***.
 
@@ -15,39 +15,35 @@ Por último, es **obligatorio** implementar ***pruebas_alumno.c*** con pruebas d
 El archivo a leer tiene un formato como se muestra a continuación:
 
 ```csv
-Pikachu,ELEC,55,40,90
-Charmander,FUEG,52,43,65
-Bulbasaur,PLAN,49,49,45
-Squirtle,AGUA,48,65,43
-Jigglypuff,NORM,45,20,20
+Magikarp,10,5.2,C
+Starmie,40,4.7,C
+Lapras,30,50.3,R
+Azumarill,50,10,C
+Suicune,70,80,L
 ```
 
-Donde la primer columna es el nombre del pokemon, luego le sigue el tipo y por último 3 números que representan ataque, defensa y velocidad del pokemon.
+Donde la primer columna es el nombre del pokemon, luego le sigue la velocidad (entero del 1 al 99), el peso (float positivo mayor a 0) y la rareza.
 
-Los tipos válidos son los siguientes:
+Las rarezas posibles son las siguientes:
 
-| Código | Tipo      |
-|--------|-----------|
-| ELEC   | Eléctrico |
-| FUEG   | Fuego     |
-| PLAN   | Planta    |
-| AGUA   | Agua      |
-| NORM   | Normal    |
-| FANT   | Fantasma  |
-| PSI    | Psíquico  |
-| LUCH   | Lucha     |
+| Código | Tipo       |
+|--------|------------|
+| C      | Común      |
+| R      | Raro       |
+| L      | Legendario |
 
 ## Respecto de los pokemones repetidos
 
-Al cargar un archivo, si se encuentran pokemones repetidos, se debe conservar solamente uno de los pokemones (el primero encontrado en el archivo). La detección de repetidos se realiza en base al nombre del pokemon.
+Al cargar un archivo, si se encuentran pokemones repetidos, se deben conservar solamente uno de los pokemones (el primero encontrado en el archivo). La detección de repetidos se realiza en base al nombre del pokemon.
 
 En lo que respecta a este trabajo, los nombres de los pokemon no distinguen diferencias entre mayúsculas y minúsculas (pikachu, Pikachu o PIKACHU son el mismo pokemon).
 
-## Ejemplos de uso
+## Ejemplos de uso del main a implementar
 
-  - **./tp1 pokedex.csv buscar pikachu**: Busca un pokemon con el nombre pikachu y muestra sus datos por pantalla.
-  - **./tp1 pokedex.csv mostrar nombre**: Muestra todos los pokemon por orden alfabetico.
-  - **./tp1 pokedex.csv mostrar tipo**: Muestra todos los pokemon ordenados por tipo.
+  - **./tp1 pokedex.csv buscar-nombre magikarp**: Busca un pokemon con el nombre magikarp y muestra sus datos por pantalla.
+  - **./tp1 pokedex.csv mostrar-uno**: Busca un pokemon al azar y lo muestra por pantalla con sus datos
+  - **./tp1 pokedex.csv mostrar-todo**: Muestra todos los pokemon por orden alfabetico.
+  - **./tp1 pokedex.csv mostrar-rarezas**: Muestra todos los pokemon agrupados por rareza.
 
 ---
 

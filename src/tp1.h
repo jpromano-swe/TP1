@@ -3,78 +3,77 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-enum tipo_pokemon {
-	TIPO_ELEC,
-	TIPO_FUEG,
-	TIPO_PLAN,
-	TIPO_AGUA,
-	TIPO_NORM,
-	TIPO_FANT,
-	TIPO_PSI,
-	TIPO_LUCH
-};
-
-struct pokemon {
-	char *nombre;
-	enum tipo_pokemon tipo;
-	int ataque;
-	int defensa;
-	int velocidad;
-};
+enum rareza_pokemon { RAREZA_COMUN, RAREZA_RARO, RAREZA_LEGENDARIO };
 
 typedef struct tp1 tp1_t;
 
+struct pokemon {
+	char *nombre;
+	int velocidad;
+	float peso;
+	enum rareza_pokemon rareza;
+};
+
 /**
- * Lee el archivo indicado y devuelve la estructura tp1 con los pokemones.
- * En caso de error devuelve NULL.
-*/
+ * Lee un archivo de pokemon según especificado en el enunciado y devuelve un TP1 con dichos pokemon.
+ *
+ * En caso de error devuelve NULL
+ */
 tp1_t *tp1_leer_archivo(const char *nombre);
 
 /**
- * Devuevle la cantidad de pokemones leidos correctamente.
- * En caso de error devuelve 0.
-*/
+ * Devuelve la cantidad de pokemon leidos en este TP1
+ *
+ * En caso de error devuelve 0
+ *
+ */
 size_t tp1_cantidad(tp1_t *tp1);
 
 /**
- * Guarda en el archivo indicado los pokemones contenidos en la estructura tp1 
- * de manera tal que tp1_leer_archivo pueda volver a leerlo correctamente.
+ * Crea un TP1 con la combinación de los pokemon de ambos TPs. En caso de
+ * duplicados se toma el pokemon del primer TP1.
  *
- * Devuelve NULL en caso de error o el tp1 pasado por parámetro en caso de exito.
-*/
-tp1_t *tp1_guardar_archivo(tp1_t *tp1, const char *nombre);
-
-/**
-* Dado un tp1 y un tipo, devuelve otro tp1 conteniendo solamente los pokemons de dicho tipo.
-*
-* En caso de error devuelve NULL.
-*/
-tp1_t *tp1_filtrar_tipo(tp1_t *un_tp, enum tipo_pokemon tipo);
-
-/**
-* Busca un pokemon por nombre.
-* En caso de no encontrarlo devuelve NULL.
-*/
-struct pokemon *tp1_buscar_nombre(tp1_t *tp, const char *nombre);
-
-/**
-* Devuelve el n-esimo pokemon por orden alfabetico (de menor a mayor).
-* En caso de no encontrarlo devuelve NULL.
-*/
-struct pokemon *tp1_buscar_orden(tp1_t *tp, int n);
-
-/**
- * Aplica la función f a cada pokemon por orden alfabetico (de menor a mayor).
- * La función deja de aplicarse si f devuelve false o se terminaron los pokemones.
- * 
- * Devuelve la cantidad de pokemones sobre los cuales se aplicó la función f.
+ * Devuelve un nuevo TP1 con la combinación de ambos TP1 o NULL en caso de
+ * error.
+ *
  */
-size_t tp1_con_cada_pokemon(tp1_t *un_tp, bool (*f)(struct pokemon *, void *),
-			    void *extra);
+tp1_t *tp1_combinar(tp1_t *tp1_a, tp1_t *tp1_b);
 
 /**
- * Libera toda la memoria asociada al tp1
+ * Guarda el TP1 a un archivo de texto.
+ *
+ * Devuelve el mismo TP1 o NULL en caso de error. Si el archivo ya existe se
+ * sobreescribe.
+ *
  */
-void tp1_destruir(tp1_t *tp1);
+tp1_t *tp1_escribir_archivo(tp1_t *tp1, const char *nombre);
+
+/**
+ * Busca un pokemon por nombre dentro del TP1 y lo devuelve.
+ *
+ * En caso de error devuelve NULL
+ */
+struct pokemon *tp1_buscar_pokemon(tp1_t *tp1, const char *nombre);
+
+/**
+ * Busca el n-esimo pokemon del TP1 (ordenados por orden alfabético)
+ *
+ * En caso de error devuelve NULL
+ */
+struct pokemon *tp1_buscar_orden(tp1_t *tp1, size_t n);
+
+/**
+ * Recorre los pokemon del TP1 aplicando la función f a cada uno. Si f devuelve
+ * true, sigue iterando.
+ *
+ * Devuelve la cantidad de veces que se invocó f.
+ */
+size_t tp1_iterar(tp1_t *tp1, bool (*f)(struct pokemon *, void *), void *extra);
+
+/**
+ * Destruye el TP1 y toda la memoria asociada
+ *
+ */
+tp1_t *tp1_destruir(tp1_t *tp1);
 
 #endif // TP1_H_

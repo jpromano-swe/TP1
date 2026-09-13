@@ -2,21 +2,16 @@
     <img width="32px" src="img/algo2.svg">
 </div>
 
-# TP
-
-> [!IMPORTANT]
-> Esto es una plantilla del informe donde cada sección está delimitada por su título. Se recomienda mantener las secciones y tomar los ejemplos de las mismas para hacer el informe. El contenido de las secciones y comentarios como este deben ser eliminados del informe presentado.
+# TP1 
 
 ## Información del estudiante
 
-* (Nombre y Apellido)
-* (Padrón)
-* (Mail)
+* Romano Juan Pablo
+* 96.508
+* jpromano@fi.uba.ar
 
 ---
 
-> [!WARNING]
-> Tener en cuenta que el informe se solicita en el ámbito universitario; el texto debe ser coherente, gramatical y ortográficamente correcto y con vocabulario adecuado para dicho contexto.
 
 ## Índice
 * [1. Instrucciones](#1-Instrucciones)
@@ -35,89 +30,74 @@
 > [!TIP]
 > Se recomienda usar un Makefile y colocar en esta sección los comandos Make.
 
-### 1.1. Compilar el proyecto
+### 1.1. Compilar el proyecto para usar comandos
 ```bash
-comando
+gcc -Wall -Wextra -Werror -std=c99 main.c src/comandos.c src/tp1.c src/leer_linea.c -o tp1
 ```
 
-### 1.2. Ejecutar las pruebas
+Ejemplo de ejecucion de un comando. Mostrar un pokemon al azar:
 ```bash
-comando
+./tp1 archivos_prueba/prueba_normal.csv mostrar-uno
+```
+
+### 1.2. Compilar y ejecutar las pruebas
+Compilar:
+```bash
+gcc -Wall -Wextra -Werror -std=c99 pruebas/pruebas_alumno.c src/tp1.c src/leer_linea.c -o pruebas_alumno
+```
+Ejecutar:
+```bash
+./pruebas_alumno
 ```
 
 ### 1.3. Ejecutar el programa con Valgrind
 ```bash
-comando
+valgrind --track-origin=yes --leak-check=full ./tp1 archivos_prueba/prueba_normal.csv
 ```
 
 ## 2. Funcionamiento
-Explicar **qué** hace el TP implementado, aclarando todas las decisiones de funcionamiento que no estaban definidas por el enunciado.
 
-> [!IMPORTANT]
-> Es muy importante entender la *diferencia entre qué y cómo*. En esta sección **NO** se busca una explicación de cómo implementaste el programa, qué funciones usaste, en qué línea, etc.; se busca una explicación de **qué** es lo que hace el programa en líneas generales.
-
-Se debe incluir todos los diagramas que sean necesarios para explicar el funcionamiento del programa. Las estructuras deberán ser explicadas con diagramas de memoria. Los diagramas pedidos en el enunciado pueden ser colocados en esta sección, pero recordá indicarlo en la sección de respuestas.
-
-> [!WARNING]
-> Es importante usar diagramas para explicar los conceptos de forma clara, pero el exceso será negativo. Los diagramas deben tener un fin explicativo y, por lo general, sirven para reemplazar uno o múltiples párrafos de explicación.
-
-## 2. Funcionamiento (EJEMPLO)
-El programa recibe 7 números del usuario y una vez obtenidos todos los muestra en pantalla. Para esto define un vector estático de 7 elementos y llena el mismo con los datos que inserta el usuario; cuando termina de insertar todos los números procede a imprimirlos en pantalla.
+El programa recibe un archivo csv con registros de distintos pokemons, procesa uno a uno los registros. En caso de que los registros sean validos, los guarda en el heap en estructuras debidamente asignadas que crecen dinamicamente partiendo de una capacidad inicial 1, luego 2, luego 4, y asi sucesivamente. Al finalizar la lectura de registros, le solicita al usuario el nombre del archivo que quiere procesar, un comando elegido entre 4 posibilidades, y ademas, en el caso del comando `buscar-nombre`, recibe un tercer parametro que es el nombre del pokemon. Luego procesa los parametros y devuelve por pantalla todos los registros, cumpliendo con cada una de las consignas para los comandos del enunciado, y en el caso de `buscar-nombre`, devuelve el pokemon pedido y sus datos por pantalla.
 <div align="center">
-  <img src="img/diagrama_flujo_programa.svg" width="70%">
+  <img src="img/diagrama_flujo.svg" width="70%">
   <p>Diagrama de flujo del programa explicado con más detalle.</p>
 </div>
 
-Cuando el vector llega a su máximo el programa procede a escalarlo con un factor de crecimiento..., es decir, si el vector tenía....
-
 ## 3. Estructura
-Explicar cómo se implementó la/s estructura/s pedida/s en el [enunciado](./ENUNCIADO.md). En esta sección el objetivo es explicar en líneas generales, no técnicas, qué contiene la estructura, para qué y por qué.
-
-## 3. Estructura (EJEMPLO)
-Para implementar la estructura decidí hacerlo con un campo..., además tiene un puntero que... y eso permite que....
+Para la implementacion de la estructura tp1, decidi que me resultaria conveniente tener la capacidad de la pokedex para asi ir incrementandola dinamicamente a medida que fuera necesario, la cantidad de pokemons unicos que se iban registrando, para asi agrandar la capacidad si ambas coincidian, y por ultimo, un puntero a un vector de `struct pokemon`, donde se almacenan individualmente todos los pokemons.
 
 ### 3.1. Diagrama de memoria
-Realizar un diagrama de memoria de la estructura de memoria durante la ejecución del programa, esto debe incluir el stack y el heap con las estructuras contenidas en ellos.
-
-### 3.1 Diagrama de memoria (EJEMPLO)
 <div align="center">
-  <img src="img/diagrama_memoria__1.svg" width="70%">
+  <img src="img/diagrama_memoria1.svg" width="70%">
   <p>Diagrama de memoria de la estructura.</p>
+</div>
+
+<div align="center">
+  <img src="img/diagrama_memoria2.svg" width="70%">
+  <p>Diagrama de memoria del nombre de los pokemons.</p>
 </div>
 
 
 ### 3.2. Análisis de complejidades
-Explicar las complejidades de las diversas funciones que se implementaron en el programa. Esto debe incluir al menos a las funciones de la interfaz (el .h) del programa. Además, se debe ofrecer una justificación de la complejidad, es decir, por qué es esa la complejidad Big-O y no otra.
+| Función | Complejidad | Justificación |
+|---|---:|---|
+| `tp1_leer_archivo` | \(O(n^2)\) | Lee y parsea el archivo, donde en el peor caso, cada linea tien n cantidad total de caracteres. Además, cada pokemon válido se agrega realizando una búsqueda lineal de duplicados y, al finalizar, se ordenan los pokemon mediante el algoritmo de ordenamiento de selección que tiene una complejidad Big-O de O(n^2),dando asi que la complejidad de leer_archivo sera de O(n^2) por ser la peor complejidad dentro de la funcion.|
+| `tp1_cantidad` | \(O(1)\) | Devuelve directamente el campo `cantidad_pokemons` de la estructura, sin realizar recorridos. |
+| `tp1_destruir` | \(O(n)\) | Recorre los \(n\) pokemon para liberar el nombre de cada uno. Despues libera el vector y la estructura principal. |
+| `tp1_buscar_pokemon` | \(O(n \cdot m)\) | En el peor caso recorre los \(n\) pokemon. Por cada uno compara un nombre que puede tener hasta \(m\) caracteres mediante `strcasecmp`. Si la longitud de los nombres mucho menor a la cantidad de pokemons, se simplifica a \(O(n)\). |
+| `tp1_buscar_orden` | \(O(1)\) | Valida el indice y accede directamente a una posición del vector. |
+| `tp1_combinar` | \(O((n)^2)\) | En el peor de los casos, ambos archivos podran tener n y m cantidades de pokemon, en cuyo caso podriamos simplificar el analisis considerando n para ambos archivos. Para cada inserción busca duplicados linealmente. Por ultimo, los pokemons se ordenan mediante selección. Dicho esto, nuevamente podemos simplificar con la mayor complejidad siendo la del ordenamiento, dando asi una complejidad de \(O((n)^2)\). |
+| `tp1_iterar` | \(O(n)\) | En el peor caso recorre los \(n\) pokemon y ejecuta la función `f` sobre cada uno. Siempre y cuando `f` no tenga complejidad mayor a \(O(n)\), la complejidad de tp1_iterar sera \(O(n)\). Caso contrario, la complejidad de tp1_iterar, dependera de la complejidad de `f`. |
+| `tp1_guardar_archivo` | \(O(n)\) | Recorre los \(n\) pokemon y escribe los datos de cada uno. El costo de cada escritura depende de la longitud del nombre. con nombres mucho menores en caracteres mucho menor a la cantidad de pokemons, se simplifica a \(O(n)\). |
 
-### 3.2. Análisis de complejidades (EJEMPLO 1)
-En el programa tenemos funciones auxiliares y funciones principales (las que van en el .h). Respecto a estas funciones podemos analizar que:
-* `fun1` tiene una complejidad de $O(1)$ ya que tiene como parámetro... y, al leer una línea....
-* `fun2` tiene una complejidad de $O(n)$ ya que tiene como parámetro..., la cual....
-* `fun3` tiene una complejidad de $O(n^2)$ ya que tiene como parámetro... y se encarga de....
-
-### 3.2. Análisis de complejidades (EJEMPLO 2)
-|      Función      |Complejidad|                 Justificación                  |
-|:-----------------:|:---------:|:----------------------------------------------:|
-|      `fun1`       |  $O(1)$   |Tiene como parámetro... y, al leer una línea....|
-|      `fun2`       |  $O(n)$   |Tiene como parámetro..., la cual....            |
-|      `fun3`       |  $O(n^2)$ |Tiene como parámetro... y se encarga de....     |
-
-## 4. Decisiones de diseño y/o complejidades de implementación
-Explicar las decisiones de diseño y/o las complejidades de implementación que hubo durante la resolución del TP.
-
-## 4. Decisiones de diseño y/o complejidades de implementación (EJEMPLO)
-La mayor complejidad en el TP se encuentra en la función `foo` que requiere hacer...; es por esto que decidí.... Además, decidí que el programa haga... para mejorar la implementación.
+## 4. Decisiones de diseño y/o complejidades de implementación 
+La mayor complejidad estuvo en manejar correctamente la memoria dinamica tanto para la lacutra de las lineas, como para el reservado de memoria para cada de cada pokemon. Tambien, fue importante definir correctamente como se manejaba la memoria para evitar perdidas de memoria al descartar pokemons duplicados o al operar con los archivos. En cuanto al diseño, me parecio que lo mas logico era intentar modularizar las funciones lo mejor posible, y separarlas segun si eran de lectura, si eran para procesar los registros, o si servian como comandos por terminal. Por ultimo, al no poder usar qsort, tuve que implementar selection sort para ordenar alfabeticamente los pokemons.
 
 ## 5. Respuestas a las preguntas teóricas
-Deberás incluir en esta sección las respuestas a las preguntas teóricas indicadas en el [enunciado](./ENUNCIADO.md) del TP.
+ - Dar una definición de complejidad computacional y explique cómo se calcula.
 
-## 5. Respuestas a las preguntas teóricas (EJEMPLO)
+La complejidad computacional es una forma de estudiar como crecen el tiempo de ejecucion y la memoria utilizada por un algoritmo segun un tamaño de entrada. Para calcularlos, se cuentan las instrucciones ejecutadas y estrucutas necesarias, y utilizando la notacion Big-O para determinar la complejidad de dicho algoritmo.
+ 
+ - Explique qué dificultades tuvo para implementar las funcionalidades pedidas en el main (si tuvo alguna) y explique si alguna de estas dificultades se podría haber evitado modificando la definición del .h
 
-### 5.1. ¿Porqué...?
-Respondido en su respectiva sección.
-
-### 5.2 ¿Cómo...?
-Para implementar el....
-
-### 5.3 ¿Cuál fue el...?
-El motivo fue....
+ La principal dificultad que tuve fue en como acceder a los pokemons sin conocer la estructura interna de tp1_t, al ser de caja opaca. Lo pude resolver usando tp1_iterar, tp1_buscar_pokemon y tp1_buscar_orden. Tal vez se podria haber simplificado un poco si el .h tenia definida una funcion para convertir las rarezas a letra directamente.

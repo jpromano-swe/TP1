@@ -1,0 +1,12 @@
+Pikachu,55,6.5,C
+Mew,80,4,L
+,40,2,C
+Arbok,0,5,C
+Raichu,100,5,C
+VelocidadTexto,test,5,C
+Unknown,20,0,C
+PokePesoInvalido,20,-3,C
+PesoTipoInvalido,20,pesado,C
+RarezaInvalida,20,2,X
+FaltanCampos,20,2
+SobranCampos,20,2,C,extra
