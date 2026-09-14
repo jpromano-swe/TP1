@@ -105,48 +105,10 @@ tp1_t *tp1_leer_archivo(const char *nombre)
 	return pokedex;
 }
 
-struct pokemon *parsear_pokemon(char *linea)
-{
-	char *campos[MAX_CAMPOS];
-	size_t cantidad_campos =
-		separar_campos_por_comas(linea, campos, MAX_CAMPOS);
-
-	if (cantidad_campos != MAX_CAMPOS) {
-		return NULL;
-	}
-
-	if (campos[0] == NULL || campos[0][0] == '\0') {
-		return NULL;
-	}
-
-	struct pokemon *pokemon = malloc(sizeof(struct pokemon));
-
-	if (pokemon == NULL) {
-		return NULL;
-	}
-
-	pokemon->nombre = malloc(strlen(campos[0]) + 1);
-
-	if (pokemon->nombre == NULL) {
-		free(pokemon);
-		return NULL;
-	}
-
-	strcpy(pokemon->nombre, campos[0]);
-	pokemon->velocidad = atoi(campos[1]);
-	pokemon->peso = strtof(campos[2], NULL);
-	if (!parsear_rareza(campos[3][0], &pokemon->rareza)) {
-		free(pokemon->nombre);
-		free(pokemon);
-		return NULL;
-	}
-	return pokemon;
-}
-
 bool parsear_velocidad(char *campo, int *resultado)
 {
 	if (campo == NULL || resultado == NULL) {
-		return NULL;
+		return false;
 	}
 
 	char *fin;
@@ -158,16 +120,16 @@ bool parsear_velocidad(char *campo, int *resultado)
 	return true;
 }
 
-bool parsear_peso(char *campo, int *resultado)
+bool parsear_peso(char *campo, float *resultado)
 {
 	if (campo == NULL || resultado == NULL) {
 		return false;
 	}
 
 	char *fin;
-	long valor = strtol(campo, &fin, 10);
+	long valor = strtof(campo, &fin);
 
-	if (fin == campo || *fin != '\0' || valor < 1 || valor > 99) {
+	if (fin == campo || *fin != '\0' || valor < 0 || valor > FLT_MAX) {
 		return false;
 	}
 
@@ -193,6 +155,50 @@ int parsear_rareza(char letra, enum rareza_pokemon *rareza)
 	default:
 		return 0;
 	}
+}
+
+struct pokemon *parsear_pokemon(char *linea)
+{
+	char *campos[MAX_CAMPOS];
+	size_t cantidad_campos =
+		separar_campos_por_comas(linea, campos, MAX_CAMPOS);
+
+	if (cantidad_campos != MAX_CAMPOS) {
+		return NULL;
+	}
+
+	if (campos[0] == NULL || campos[0][0] == '\0') {
+		return NULL;
+	}
+
+	int velocidad;
+	float peso;
+	enum rareza_pokemon rareza;
+
+	if (!parsear_velocidad(campos[1], &velocidad) ||
+	    !parsear_peso(campos[2], &peso) || campos[3][0] == '\0' ||
+	    campos[3][1] != '\0' || !parsear_rareza(campos[3][0], &rareza)) {
+		return NULL;
+	}
+
+	struct pokemon *pokemon = malloc(sizeof(struct pokemon));
+
+	if (pokemon == NULL) {
+		return NULL;
+	}
+
+	pokemon->nombre = malloc(strlen(campos[0]) + 1);
+
+	if (pokemon->nombre == NULL) {
+		free(pokemon);
+		return NULL;
+	}
+
+	strcpy(pokemon->nombre, campos[0]);
+	pokemon->velocidad = velocidad;
+	pokemon->peso = peso;
+	pokemon->rareza = rareza;
+	return pokemon;
 }
 
 size_t convertir_campos_en_strings(char *linea, char **campos,
