@@ -60,7 +60,7 @@ void eliminar_repetidos(tp1_t *pokedex)
 		}
 	}
 
-	pokedex->cantidad_pokemons = posicion;
+	pokedex->cantidad_pokemons = (unsigned int)posicion;
 }
 
 int agregar_pokemon_a_pokedex(tp1_t *pokedex, struct pokemon *nuevo_pokemon)
