@@ -22,7 +22,7 @@ static void ordenar_pokemons_por_nombre(struct pokemon *pokemons,
 
 struct tp1 {
 	struct pokemon *pokemones;
-	unsigned int cantidad_pokemons;
+	size_t cantidad_pokemons;
 	size_t capacidad_pokemons;
 };
 
@@ -45,26 +45,14 @@ tp1_t *crear_tp1_vacio()
 	return tp1;
 }
 
-void eliminar_repetidos(tp1_t *pokedex)
-{
-	size_t posicion = 0;
-
-	for (size_t i = 0; i < pokedex->cantidad_pokemons; i++) {
-		if (posicion > 0 &&
-		    strcasecmp(pokedex->pokemones[posicion - 1].nombre,
-			       pokedex->pokemones[i].nombre) == 0) {
-			free(pokedex->pokemones[i].nombre);
-		} else {
-			pokedex->pokemones[posicion] = pokedex->pokemones[i];
-			posicion++;
-		}
-	}
-
-	pokedex->cantidad_pokemons = (unsigned int)posicion;
-}
-
 int agregar_pokemon_a_pokedex(tp1_t *pokedex, struct pokemon *nuevo_pokemon)
 {
+	if (tp1_buscar_pokemon(pokedex, nuevo_pokemon->nombre) != NULL) {
+		free(nuevo_pokemon->nombre);
+		free(nuevo_pokemon);
+		return 0;
+	}
+
 	if (pokedex->cantidad_pokemons == pokedex->capacidad_pokemons) {
 		if (agrandar_vector_pokemons(pokedex) == -1) {
 			free(nuevo_pokemon->nombre);
@@ -113,7 +101,6 @@ tp1_t *tp1_leer_archivo(const char *nombre)
 	}
 	ordenar_pokemons_por_nombre(pokedex->pokemones,
 				    pokedex->cantidad_pokemons);
-	eliminar_repetidos(pokedex);
 	fclose(archivo);
 	return pokedex;
 }
@@ -316,13 +303,9 @@ void ordenar_pokemons_por_nombre(struct pokemon *pokemons, size_t cantidad)
 		}
 
 		if (indice_menor != i) {
-			struct pokemon menor = pokemons[indice_menor];
-
-			for (size_t j = indice_menor; j > i; j--) {
-				pokemons[j] = pokemons[j - 1];
-			}
-
-			pokemons[i] = menor;
+			struct pokemon auxiliar = pokemons[i];
+			pokemons[i] = pokemons[indice_menor];
+			pokemons[indice_menor] = auxiliar;
 		}
 	}
 }
@@ -390,36 +373,57 @@ tp1_t *tp1_combinar(tp1_t *tp1_a, tp1_t *tp1_b)
 	}
 
 	tp1_t *resultado = crear_tp1_vacio();
-
 	if (resultado == NULL) {
 		return NULL;
 	}
 
-	if (resultado->pokemones == NULL) {
-		free(resultado);
-		return NULL;
+	size_t i = 0;
+	size_t j = 0;
+
+	while (i < tp1_a->cantidad_pokemons && j < tp1_b->cantidad_pokemons) {
+		int comparacion = strcasecmp(tp1_a->pokemones[i].nombre,
+					     tp1_b->pokemones[j].nombre);
+
+		if (comparacion <= 0) {
+			if (agregar_copia_pokemon(resultado,
+						  &tp1_a->pokemones[i]) == -1) {
+				tp1_destruir(resultado);
+				return NULL;
+			}
+
+			i++;
+
+			if (comparacion == 0) {
+				j++;
+			}
+		} else {
+			if (agregar_copia_pokemon(resultado,
+						  &tp1_b->pokemones[j]) == -1) {
+				tp1_destruir(resultado);
+				return NULL;
+			}
+
+			j++;
+		}
 	}
 
-	for (size_t i = 0; i < tp1_a->cantidad_pokemons; i++) {
+	while (i < tp1_a->cantidad_pokemons) {
 		if (agregar_copia_pokemon(resultado, &tp1_a->pokemones[i]) ==
 		    -1) {
 			tp1_destruir(resultado);
 			return NULL;
 		}
+		i++;
 	}
 
-	for (size_t i = 0; i < tp1_b->cantidad_pokemons; i++) {
-		if (agregar_copia_pokemon(resultado, &tp1_b->pokemones[i]) ==
+	while (j < tp1_b->cantidad_pokemons) {
+		if (agregar_copia_pokemon(resultado, &tp1_b->pokemones[j]) ==
 		    -1) {
 			tp1_destruir(resultado);
 			return NULL;
 		}
+		j++;
 	}
-
-	ordenar_pokemons_por_nombre(resultado->pokemones,
-				    resultado->cantidad_pokemons);
-
-	eliminar_repetidos(resultado);
 
 	return resultado;
 }
