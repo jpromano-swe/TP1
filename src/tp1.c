@@ -353,9 +353,6 @@ void ordenar_pokemons_por_rareza(struct pokemon *pokemons, size_t cantidad)
 
 int agregar_copia_pokemon(tp1_t *destino, struct pokemon *pokemon)
 {
-	if (tp1_buscar_pokemon(destino, pokemon->nombre) != NULL) {
-		return 0;
-	}
 	if (destino->cantidad_pokemons == destino->capacidad_pokemons) {
 		if (agrandar_vector_pokemons(destino) == -1) {
 			return -1;
@@ -421,6 +418,8 @@ tp1_t *tp1_combinar(tp1_t *tp1_a, tp1_t *tp1_b)
 
 	ordenar_pokemons_por_nombre(resultado->pokemones,
 				    resultado->cantidad_pokemons);
+
+	eliminar_repetidos(resultado);
 
 	return resultado;
 }
