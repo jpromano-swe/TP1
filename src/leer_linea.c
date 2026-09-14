@@ -38,9 +38,16 @@ int leer_linea_ptr(char **ptr, size_t *tamaño, FILE *archivo)
 		     archivo) != NULL) {
 		bloques_usados += strlen(*ptr + bloques_usados);
 		if (bloques_usados > 0 && (*ptr)[bloques_usados - 1] == '\n') {
+			(*ptr)[--bloques_usados] = '\0';
+
+			if (bloques_usados > 0 &&
+			    (*ptr)[bloques_usados - 1] == '\r') {
+				(*ptr)[--bloques_usados] = '\0';
+			}
+
 			return (int)bloques_usados;
 		}
-		if ((size_t)bloques_usados + 1 >= *tamaño) {
+		if (bloques_usados + 1 >= *tamaño) {
 			if (agrandar_capacidad(ptr, tamaño) == -1) {
 				return -1;
 			}

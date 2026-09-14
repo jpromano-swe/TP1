@@ -127,13 +127,13 @@ bool parsear_peso(char *campo, float *resultado)
 	}
 
 	char *fin;
-	long valor = strtof(campo, &fin);
+	float valor = strtof(campo, &fin);
 
-	if (fin == campo || *fin != '\0' || valor < 0 || valor > FLT_MAX) {
+	if (fin == campo || *fin != '\0' || valor <= 0 || valor > FLT_MAX) {
 		return false;
 	}
 
-	*resultado = (int)valor;
+	*resultado = valor;
 	return true;
 }
 

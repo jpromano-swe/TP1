@@ -1,5 +1,5 @@
-#include "comandos.h"
-#include "tp1.h"
+#include "src/comandos.h"
+#include "src/tp1.h"
 
 #include <string.h>
 

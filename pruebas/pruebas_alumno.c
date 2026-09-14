@@ -9,7 +9,7 @@
 #define ARCHIVO_VACIO "archivos_prueba/prueba_vacio.csv"
 #define ARCHIVO_NORMAL "archivos_prueba/prueba_normal.csv"
 #define ARCHIVO_REPETIDOS "archivos_prueba/prueba_repetidos.csv"
-#define ARCHIVO_INVALIDOS "archivos_prueba/prueba_invalidos.csv"
+#define ARCHIVO_INVALIDOS "archivos_prueba/prueba_linea_invalida.csv"
 #define ARCHIVO_PARSEO "archivos_prueba/prueba_parseo.csv"
 #define ARCHIVO_A "archivos_prueba/prueba_a.csv"
 #define ARCHIVO_B "archivos_prueba/prueba_b.csv"
@@ -94,13 +94,13 @@ void leer_ignora_lineas_invalidas(void)
 
 void parsear_conserva_pokemons_validos(void)
 {
-	tp1_t *tp1 = tp1_leer_archivo(ARCHIVO_NORMAL);
+	tp1_t *tp1 = tp1_leer_archivo(ARCHIVO_PARSEO);
 
 	pa2m_afirmar(tp1 != NULL,
 		     "El archivo de parseo devuelve un TP1 valido");
 
-	pa2m_afirmar(tp1_cantidad(tp1) == 5,
-		     "Solamente se cargan los dos pokemon validos");
+	pa2m_afirmar(tp1_cantidad(tp1) == 3,
+		     "Solamente se cargan los tres pokemon validos");
 
 	struct pokemon *magikarp = tp1_buscar_pokemon(tp1, "Magikarp");
 
@@ -397,7 +397,7 @@ void iterar_recorre_todos_los_pokemons(void)
 	size_t iteraciones = 0;
 
 	size_t llamadas_funcion =
-		tp1_iterar(tp1, contar_todos_los_pokemons, &llamadas_funcion);
+		tp1_iterar(tp1, contar_todos_los_pokemons, &iteraciones);
 
 	pa2m_afirmar(llamadas_funcion == tp1_cantidad(tp1),
 		     "Iterar recorrio todos los pokemons");
@@ -445,7 +445,7 @@ int main(void)
 	combinar_conserva_el_pokemon_del_primer_tp1();
 
 	pa2m_nuevo_grupo("Pruebas iteracion");
-	iterar_se_detiene_cuando_la_funcion_devuelve_false();
+	iterar_recorre_todos_los_pokemons();
 
 	pa2m_nuevo_grupo("Pruebas destruccion");
 	destruir_null_devuelve_null();

@@ -74,6 +74,6 @@ size_t tp1_iterar(tp1_t *tp1, bool (*f)(struct pokemon *, void *), void *extra);
  * Destruye el TP1 y toda la memoria asociada
  *
  */
-tp1_t *tp1_destruir(tp1_t *tp1);
+void *tp1_destruir(tp1_t *tp1);
 
 #endif // TP1_H_
