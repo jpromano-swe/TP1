@@ -47,12 +47,6 @@ tp1_t *crear_tp1_vacio()
 
 int agregar_pokemon_a_pokedex(tp1_t *pokedex, struct pokemon *nuevo_pokemon)
 {
-	if (tp1_buscar_pokemon(pokedex, nuevo_pokemon->nombre) != NULL) {
-		free(nuevo_pokemon->nombre);
-		free(nuevo_pokemon);
-		return 0;
-	}
-
 	if (pokedex->cantidad_pokemons == pokedex->capacidad_pokemons) {
 		if (agrandar_vector_pokemons(pokedex) == -1) {
 			free(nuevo_pokemon->nombre);
@@ -67,6 +61,29 @@ int agregar_pokemon_a_pokedex(tp1_t *pokedex, struct pokemon *nuevo_pokemon)
 	free(nuevo_pokemon);
 
 	return 1;
+}
+
+int eliminar_repetidos(tp1_t *pokedex)
+{
+	if (pokedex == NULL || pokedex->pokemones == NULL) {
+		return -1;
+	}
+
+	size_t posicion = 0;
+
+	for (size_t i = 0; i < pokedex->cantidad_pokemons; i++) {
+		if (posicion > 0 &&
+		    strcasecmp(pokedex->pokemones[posicion - 1].nombre,
+			       pokedex->pokemones[i].nombre) == 0) {
+			free(pokedex->pokemones[i].nombre);
+		} else {
+			pokedex->pokemones[posicion] = pokedex->pokemones[i];
+			posicion++;
+		}
+	}
+
+	pokedex->cantidad_pokemons = posicion;
+	return 0;
 }
 
 tp1_t *tp1_leer_archivo(const char *nombre)
@@ -101,6 +118,12 @@ tp1_t *tp1_leer_archivo(const char *nombre)
 	}
 	ordenar_pokemons_por_nombre(pokedex->pokemones,
 				    pokedex->cantidad_pokemons);
+
+	if (eliminar_repetidos(pokedex) == -1) {
+		fclose(archivo);
+		tp1_destruir(pokedex);
+		return NULL;
+	}
 	fclose(archivo);
 	return pokedex;
 }
@@ -288,25 +311,17 @@ struct pokemon *tp1_buscar_pokemon(tp1_t *pokedex, const char *nombre_pokemon)
 
 void ordenar_pokemons_por_nombre(struct pokemon *pokemons, size_t cantidad)
 {
-	if (!pokemons || cantidad < 2) {
-		return;
-	}
+	for (size_t i = 1; i < cantidad; i++) {
+		struct pokemon actual = pokemons[i];
+		size_t j = i;
 
-	for (size_t i = 0; i + 1 < cantidad; i++) {
-		size_t indice_menor = i;
-
-		for (size_t j = i + 1; j < cantidad; j++) {
-			if (strcasecmp(pokemons[j].nombre,
-				       pokemons[indice_menor].nombre) < 0) {
-				indice_menor = j;
-			}
+		while (j > 0 &&
+		       strcasecmp(actual.nombre, pokemons[j - 1].nombre) < 0) {
+			pokemons[j] = pokemons[j - 1];
+			j--;
 		}
 
-		if (indice_menor != i) {
-			struct pokemon auxiliar = pokemons[i];
-			pokemons[i] = pokemons[indice_menor];
-			pokemons[indice_menor] = auxiliar;
-		}
+		pokemons[j] = actual;
 	}
 }
 
